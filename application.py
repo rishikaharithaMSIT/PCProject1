@@ -21,12 +21,11 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if request.method == "POST":
-        pass
     return render_template("register.html")
