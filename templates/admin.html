@@ -1,0 +1,30 @@
+{% extends "basicLayout.html" %}
+
+{% block title %}
+    Admin
+{% endblock %}
+
+{% block body %}
+<div class="container">
+  <h2>Admin Page</h2>
+  <p>This is the list of registered users</p>            
+  <table class="table">
+    <thead>
+      <tr>
+        <th>User Name</th>
+        <th>Email ID</th>
+        <th>Time of Registration</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for each in data %}
+      <tr>
+        <td>{{each.username}}</td>
+        <td>{{each.email}}</td>
+        <td>{{each.registerTime}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
