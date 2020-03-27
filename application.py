@@ -1,21 +1,21 @@
 import os
 
+import logging
+
 from flask import Flask, session, request, render_template,redirect,url_for
 from flask_session import Session
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, exc, desc
 from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
 from models import *
+
+logging.basicConfig(level=logging.DEBUG)
 
 app = Flask(__name__)
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
-
-# Configure session to use filesystem
-# app.config["SESSION_PERMANENT"] = False
-# app.config["SESSION_TYPE"] = "filesystem"
 
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -27,35 +27,38 @@ db.init_app(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 # db = scoped_session(sessionmaker(bind=engine))
 
-
+# default router
 @app.route("/")
 def index():
     return render_template("index.html")
 
+#register page
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         username = request.form['username']
         email = request.form['email']
         password = request.form['pswd']
-        registerTime = datetime.now()
-        print(username,email,registerTime,password)
-
+        logging.debug('print',username,email,password)
         queryResultSet = Users.query.filter_by(email=email).all()
 
-        responseMessage = ""
-        if(len(queryResultSet) > 0):
-            responseMessage = "The email id you have used already exists!"
-        else:
-            user = Users(username = username, email = email, password = password, registerTime = registerTime)
+        try:
+            user = Users(username = username, email = email, password = password, registerTime = datetime.now())
             db.session.add(user)
             db.session.commit()
             responseMessage = "You registered sucessfully!"
-        return render_template("index.html",data=responseMessage)
+            return render_template("index.html",data=responseMessage)
+        except exc.IntegrityError:
+            responseMessage = "Your email already exists!"
+            return render_template("index.html",data=responseMessage)
+        except:
+            logging.debug('exception message','something else went wrong')
+        
     return render_template("register.html")
 
+#admin page
 @app.route("/admin")
 def listUsers():
-    queryResultSet = Users.query.all()
-    # print(queryResultSet[0])
+    queryResultSet = Users.query.order_by(desc(Users.registerTime)).all()
     return render_template('admin.html', data=queryResultSet)
+

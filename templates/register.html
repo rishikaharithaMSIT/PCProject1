@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Registration</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-</head>
-<body>
+{% extends "basicLayout.html" %}
 
+{% block title %}
+    Register
+{% endblock %}
 
+{% block body %}
 <div class="row">
       <div class="col-sm-4" ></div>
       <div class="col-sm-4" ><h2>User Registration</h2></div>
@@ -22,7 +15,7 @@
       <div class="col-sm-6" >
         <div class="container">
   
-  <form method="POST">
+  <form action="{{ url_for('register') }}" method="POST">
     <div class="form-group">
       <label for="username">Name:</label>
       <input type="text" class="form-control" id="username" placeholder="Enter user name" name="username">
@@ -42,7 +35,6 @@
       </div>
       <div class="col-sm-3" ></div>
 </div>
+{% endblock %}
 
 
-</body>
-</html>
