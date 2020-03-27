@@ -53,3 +53,9 @@ def register():
             responseMessage = "You registered sucessfully!"
         return render_template("index.html",data=responseMessage)
     return render_template("register.html")
+
+@app.route("/admin")
+def listUsers():
+    queryResultSet = Users.query.all()
+    # print(queryResultSet[0])
+    return render_template('admin.html', data=queryResultSet)
