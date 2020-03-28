@@ -2,12 +2,13 @@ import os
 
 import logging
 
-from flask import Flask, session, request, render_template,redirect,url_for
+from flask import Flask, session, request, render_template, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine, exc, desc
 from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
 from models import *
+from passlib.hash import bcrypt
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -32,28 +33,43 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 def index():
     return render_template("index.html")
 
+# login
+@app.route("/auth", methods=['POST'])
+def auth():
+    if request.method == "POST":
+        email = request.form['email']
+        password = request.form['pswd']
+        if email == "" or password == "":
+            return render_template("register.html", data="Please enter username and password to register")
+        queryResultSet = Users.query.filter_by(email=email).first()
+        if queryResultSet is not None:
+            if bcrypt.verify(password, queryResultSet.password):
+                return render_template("homePage.html", data="Login success")
+            else:
+                return render_template("register.html", data="Email and password does not match. Try again!")
+
+        return render_template("register.html", data="Email does not exists. Try to Register")
+
 #register page
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        username = request.form['username']
-        email = request.form['email']
-        password = request.form['pswd']
-        logging.debug('print',username,email,password)
-        queryResultSet = Users.query.filter_by(email=email).all()
-
+        print(request.form['button'])
+        email = request.form['email'] 
+        password = bcrypt.encrypt(request.form['pswd'])       
+        if email == "" or bcrypt.verify("", password):
+            return render_template("register.html", data="Please enter username and password to register")
+        if '@' not in email or '.' not in email:
+            return render_template("register.html", data="Please enter a valid email to register")
         try:
-            user = Users(username = username, email = email, password = password, registerTime = datetime.now())
+            user = Users(email=email, password=password, registerTime=datetime.now())
             db.session.add(user)
             db.session.commit()
-            responseMessage = "You registered sucessfully!"
-            return render_template("index.html",data=responseMessage)
+            return render_template("register.html", data="You registered sucessfully! Login to continue.")
         except exc.IntegrityError:
-            responseMessage = "Your email already exists!"
-            return render_template("index.html",data=responseMessage)
+            return render_template("register.html", data="The Email you used already exists! Try logging in.")
         except:
-            logging.debug('exception message','something else went wrong')
-        
+            logging.debug('exception message', 'something else went wrong in adding a user')
     return render_template("register.html")
 
 #admin page
