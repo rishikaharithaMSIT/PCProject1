@@ -1,3 +1,6 @@
+"""
+Flask App
+"""
 import os
 
 import logging
@@ -21,17 +24,23 @@ if not os.getenv("DATABASE_URL"):
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# Session(app)
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 db.init_app(app)
 
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
-# db = scoped_session(sessionmaker(bind=engine))
 
 # default router
 @app.route("/")
 def index():
-    return render_template("index.html")
+    try:
+        currentUser = session['user']
+    except:
+        return render_template("register.html", data="You must log in continue.")
+    return render_template("homePage.html", data=currentUser)
 
 # login
 @app.route("/auth", methods=['POST'])
@@ -44,11 +53,17 @@ def auth():
         queryResultSet = Users.query.filter_by(email=email).first()
         if queryResultSet is not None:
             if bcrypt.verify(password, queryResultSet.password):
-                return render_template("homePage.html", data="Login success")
+                session['user'] = email
+                return redirect(url_for('index'))
             else:
                 return render_template("register.html", data="Email and password does not match. Try again!")
 
         return render_template("register.html", data="Email does not exists. Try to Register")
+
+@app.route("/logout")
+def logout():    
+    session.clear()
+    return render_template("register.html", data="You logged out sucessfully")
 
 #register page
 @app.route("/register", methods=["GET", "POST"])
