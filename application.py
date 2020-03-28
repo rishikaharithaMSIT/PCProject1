@@ -78,7 +78,6 @@ register page
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
-        print(request.form['button'])
         email = request.form['email'] 
         password = bcrypt.encrypt(request.form['pswd'])       
         if email == "" or bcrypt.verify("", password):
