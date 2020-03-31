@@ -8,7 +8,7 @@ from flask_session import Session
 from sqlalchemy import create_engine, exc, desc
 from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
-from models import *
+from models import Users, db, Books
 from passlib.hash import bcrypt
 
 logging.basicConfig(level=logging.DEBUG)
@@ -98,6 +98,16 @@ def register():
             logging.debug('exception message', 'something else went wrong\
              in adding a user')
     return render_template("register.html")
+
+"""
+book_page
+"""
+@app.route("/books/<isbn>", methods=["GET"])
+def book_details(isbn):
+    print("here the isbn", isbn)
+    book = Books.query.filter_by(isbn=str(isbn)).first()
+    print(book)
+    return render_template("bookDetails.html", book=book)
 
 """
 admin page
