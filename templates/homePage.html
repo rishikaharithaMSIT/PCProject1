@@ -1,0 +1,19 @@
+{% extends "basicLayout.html" %}
+
+{% block title %}
+    Home Page
+{% endblock %}
+
+{% block body %}
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-between">
+	  <ul class="navbar-nav mr-auto">
+	    
+	    <li class="nav-item">
+	      <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+	    </li>
+	    
+	  </ul>
+	</nav>
+	<h2>Welcome! {{data}}<h2>
+{% endblock %}
+
