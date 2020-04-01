@@ -10,6 +10,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
 from models import *
 from passlib.hash import bcrypt
+import search_feature
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -48,11 +49,21 @@ search
 """
 @app.route("/search",methods=['POST'])
 def search():
-    query = "%"+request.form['search']+"%".title()
-    data = Books.query.filter(or_(Books.isbn.like(query),Books.title.like(query),Books.author.like(query))).all()
+    data = search_feature.getSearchDetails(request.form['search'])
+    print(data)
     if len(data) == 0:
         return render_template("homePage.html", noresults="No matching Results Found")
     return render_template("homePage.html", data=data, isSearch="yes")
+
+# """
+# search api
+# """
+# @app.route("/api/search")
+# def searchAPI():
+#     data = 
+#     if len(data) == 0:
+#         return render_template("homePage.html", noresults="No matching Results Found")
+#     return render_template("homePage.html", data=data, isSearch="yes")
 
 """
 login
