@@ -2,11 +2,25 @@ import unittest
 from models import *
 import search_feature
 
+import os
+import logging
+from flask import Flask, session, request, render_template, redirect, url_for
+from flask_session import Session
+from sqlalchemy import create_engine, exc, desc, or_
+from sqlalchemy.orm import scoped_session, sessionmaker
+from datetime import datetime
+from passlib.hash import bcrypt
+
   
 class TestStringMethods(unittest.TestCase): 
       
     def setUp(self):
-        pass
+        app = Flask(__name__)
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+        db = SQLAlchemy()
+        db.init_app(app)
+        app.app_context().push() 
 
     # Returns True or False.  
     def test(self):         

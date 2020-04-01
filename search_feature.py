@@ -19,14 +19,6 @@ from flask_sqlalchemy import SQLAlchemy
 search
 """
 def getSearchDetails(query):
-    app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    db = SQLAlchemy()
-    db.init_app(app)
-    app.app_context().push()    
-
-
     query = "%"+query+"%".title()
     data = Books.query.filter(or_(Books.isbn.like(query),Books.title.like(query),Books.author.like(query))).all()
     return data
