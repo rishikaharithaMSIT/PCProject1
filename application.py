@@ -104,9 +104,7 @@ book_page
 """
 @app.route("/books/<isbn>", methods=["GET"])
 def book_details(isbn):
-    print("here the isbn", isbn)
-    book = Books.query.filter_by(isbn=str(isbn)).first()
-    print(book)
+    book = Books.query.get(isbn)
     return render_template("bookDetails.html", book=book)
 
 """
