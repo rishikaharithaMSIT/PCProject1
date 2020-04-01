@@ -5,11 +5,12 @@ import os
 import logging
 from flask import Flask, session, request, render_template, redirect, url_for
 from flask_session import Session
-from sqlalchemy import create_engine, exc, desc
+from sqlalchemy import create_engine, exc, desc, or_
 from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
 from models import *
 from passlib.hash import bcrypt
+import search_feature
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -40,7 +41,29 @@ def index():
         current_user = session['user']
     except:
         return render_template("register.html", data="You must log in continue.")
-    return render_template("homePage.html", data=current_user)
+    queryResultSet = Books.query.all()
+    return render_template("homePage.html", data=queryResultSet)
+
+"""
+search
+"""
+@app.route("/search",methods=['POST'])
+def search():
+    data = search_feature.getSearchDetails(request.form['search'])
+    print(data)
+    if len(data) == 0:
+        return render_template("homePage.html", noresults="No matching Results Found")
+    return render_template("homePage.html", data=data, isSearch="yes")
+
+# """
+# search api
+# """
+# @app.route("/api/search")
+# def searchAPI():
+#     data = 
+#     if len(data) == 0:
+#         return render_template("homePage.html", noresults="No matching Results Found")
+#     return render_template("homePage.html", data=data, isSearch="yes")
 
 """
 login

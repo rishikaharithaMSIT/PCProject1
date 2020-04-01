@@ -1,19 +1,68 @@
-{% extends "basicLayout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Home page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+  
 
-{% block title %}
-    Home Page
-{% endblock %}
-
-{% block body %}
 	<nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-between">
-	  <ul class="navbar-nav mr-auto">
-	    
-	    <li class="nav-item">
-	      <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
-	    </li>
-	    
-	  </ul>
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Good Reads</a>
+		  </div>
+		  <form class="form-inline" action="{{ url_for('search') }}" method="POST">
+			<input class="form-control mr-sm-2" name="search" type="text" placeholder="Search">
+			<button class="btn btn-success" type="submit">Search</button>
+		  </form>
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="{{url_for('logout')}}"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+		  </ul>
 	</nav>
-	<h2>Welcome! {{data}}<h2>
-{% endblock %}
+	<br>
+	{% if noresults %}
+	<div class="container">
+	<div class="card">
+			
+		<div class="card-body">
+		  <h3 class="card-title">No Matching Results Found</h3>
+		  <h5 class="card-text" >Try to search again or <a href="{{url_for('index')}}" class="card-link">return to home page</a> </h5>
+		
+		</div>
+		
+	  </div> 
+	</div>
+	{% endif %}
+	<div class="container">
+		{% if isSearch %}
+	<div class="card">
+			
+		<div class="card-body">
+		  <h5><a href = "{{url_for('index')}}" class="card-link">Go to home page</a></h5>		  
+		
+		</div>
+		
+	  </div>
+	  <br> 
+	{% endif %}
+		{% for each in data %}
+		<div class="card">
+			
+			<div class="card-body">
+			  <h3 class="card-title">{{each.title}}</h3>
+			  <h5 class="card-text" >Author: {{each.author}} | Year of publication: {{each.year}} | isbn: {{each.isbn}} | <a href="#" class="card-link">View Book</a></h5>
+			
+			</div>
+			
+		  </div> 
+		  <br> 
+		  {% endfor %}  
+</div>
+</body>
+</html>
 
