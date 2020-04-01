@@ -1,0 +1,26 @@
+{% extends "basicLayout.html" %}
+
+{% block title %}
+    Book Page
+{% endblock %}
+
+{% block body %}
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-between">
+	  <ul class="navbar-nav mr-auto">
+	    
+	    <li class="nav-item">
+	      <a class="nav-link" href="{{url_for('logout')}}">Logout</a>
+	    </li>
+	    
+	  </ul>
+	</nav>
+	<br>
+<div class='container bg-light row no-gutters'>
+    <h1 class='container bg-dark text-white text-center my-2'>{{book.title}}</h1>
+    <div class='center'>
+        Author:<h4> {{book.author}}</h4>
+        Year:<h4> {{book.year}}</h4>
+        Isbn:<h6> {{book.isbn}}</h6>
+    </div>
+</div>
+{% endblock %}
