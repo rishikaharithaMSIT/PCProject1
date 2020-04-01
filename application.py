@@ -10,6 +10,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
 from models import Users, db, Books
 from passlib.hash import bcrypt
+import book_details
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -103,8 +104,9 @@ def register():
 book_page
 """
 @app.route("/books/<isbn>", methods=["GET"])
-def book_details(isbn):
-    book = Books.query.get(isbn)
+def book_detail(isbn):
+    # book = Books.query.get(isbn)
+    book = book_details.get_book_details(isbn)
     return render_template("bookDetails.html", book=book)
 
 """
