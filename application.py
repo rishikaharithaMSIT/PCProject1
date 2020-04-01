@@ -34,21 +34,26 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 """
 default router
 """
-@app.route("/",methods=['GET','POST'])
+@app.route("/")
 def index():
-    if request.method == "POST":
-        query = "%"+request.form['search']+"%".title()
-        data = Books.query.filter(or_(Books.isbn.like(query),Books.title.like(query),Books.author.like(query))).all()
-        if len(data) == 0:
-            return render_template("homePage.html", noresults="No matching Results Found")
-        return render_template("homePage.html", data=data, isSearch="yes")
-
     try:
         current_user = session['user']
     except:
         return render_template("register.html", data="You must log in continue.")
     queryResultSet = Books.query.all()
     return render_template("homePage.html", data=queryResultSet)
+
+"""
+search
+"""
+@app.route("/search",methods=['POST'])
+def search():
+    query = "%"+request.form['search']+"%".title()
+    data = Books.query.filter(or_(Books.isbn.like(query),Books.title.like(query),Books.author.like(query))).all()
+    if len(data) == 0:
+        return render_template("homePage.html", noresults="No matching Results Found")
+    return render_template("homePage.html", data=data, isSearch="yes")
+
 """
 login
 """
