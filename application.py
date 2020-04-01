@@ -5,7 +5,7 @@ import os
 import logging
 from flask import Flask, session, request, render_template, redirect, url_for
 from flask_session import Session
-from sqlalchemy import create_engine, exc, desc
+from sqlalchemy import create_engine, exc, desc, or_
 from sqlalchemy.orm import scoped_session, sessionmaker
 from datetime import datetime
 from models import *
@@ -34,14 +34,21 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 """
 default router
 """
-@app.route("/")
+@app.route("/",methods=['GET','POST'])
 def index():
+    if request.method == "POST":
+        query = "%"+request.form['search']+"%".title()
+        data = Books.query.filter(or_(Books.isbn.like(query),Books.title.like(query),Books.author.like(query))).all()
+        if len(data) == 0:
+            return render_template("homePage.html", noresults="No matching Results Found")
+        return render_template("homePage.html", data=data, isSearch="yes")
+
     try:
         current_user = session['user']
     except:
         return render_template("register.html", data="You must log in continue.")
-    return render_template("homePage.html", data=current_user)
-
+    queryResultSet = Books.query.all()
+    return render_template("homePage.html", data=queryResultSet)
 """
 login
 """

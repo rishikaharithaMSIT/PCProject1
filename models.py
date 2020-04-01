@@ -8,7 +8,7 @@ class Users(db.Model):
     password = db.Column(db.String, nullable=False)
     registerTime = db.Column(db.DateTime(timezone=True), nullable=False)
 
-    def __init__(self, email, password, created):
+    def __init__(self, email, password, registerTime):
         self.email = email
         self.password = password
         self.registerTime = registerTime
