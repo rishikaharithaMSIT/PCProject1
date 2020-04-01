@@ -38,6 +38,6 @@ class BasicTests(unittest.TestCase):
 
         res = book_details.get_book_details('1244')
         self.assertEqual(res, None)
-     
+    
 if __name__ == "__main__":
     unittest.main()

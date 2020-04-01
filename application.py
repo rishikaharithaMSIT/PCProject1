@@ -109,6 +109,7 @@ def book_detail(isbn):
     book = book_details.get_book_details(isbn)
     return render_template("bookDetails.html", book=book)
 
+
 """
 admin page
 """
