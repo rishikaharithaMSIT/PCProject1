@@ -47,6 +47,16 @@ def index():
     queryResultSet = Books.query.all()
     return render_template("homePage.html", data=queryResultSet)
 
+
+@app.route("/userhome")
+def home():
+    try:
+        current_user = session['user']
+    except:
+        return render_template("register.html", data="You must log in continue.")
+    # queryResultSet = Books.query.all()
+    return render_template("userhome.html")
+
 """
 search
 """

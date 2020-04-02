@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Home page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script>
+      document.addEventListener('DOMContentLoaded', () => {
+
+      document.querySelector('#form').onsubmit = () => {
+
+          // Initialize new request
+          const request = new XMLHttpRequest();
+          const searchParam = document.querySelector('#search').value;
+        //   alert(searchParam);
+          request.open('POST', '/api/search/');
+          request.setRequestHeader("Content-Type", "application/json");
+          // Callback function for when request completes
+          request.onload = () => {
+
+              // Extract JSON data from request
+              const data = JSON.parse(request.responseText);
+            //   alert(data.books)
+            //   .innerHTML = data.books;
+              data.books.forEach( function(book ) {
+                document.querySelector('#result').innerHTML += 
+                "<div class='card'> <div class='card-body'> <h3 class='card-title'>" + book.title + "</h3>" +
+                 "<h5 class = 'card-text'>"+ book.author+ "&nbsp&nbsp&nbsp <a href='' onclick ='func()' class='card-link'>View Book</a></h5>";
+            });
+            
+          }
+          // Add data to send with request
+          var data = JSON.stringify({ "query": searchParam});
+          
+          // Send request
+          request.send(data);
+          return false;
+      };
+      });
+  </script>
+</head>
+<body>
+	<nav class="navbar navbar-expand-sm bg-dark navbar-dark justify-content-between">
+		<div class="navbar-header">
+			<a class="navbar-brand" href="#">Good Reads</a>
+		  </div>
+		  <form id="form" method="POST">
+			<input class="form-control mr-sm-2" id="search" type="text" placeholder="Search">
+			<button class="btn btn-success" type="submit" >Search</button>
+		  </form>
+		<ul class="nav navbar-nav navbar-right">
+			<li><a href="{{url_for('logout')}}"><span class="glyphicon glyphicon-log-out"></span> Log out</a></li>
+		  </ul>
+    </nav>
+    <br>
+    <div id="result">
+
+    </div>
+</body>
+</html>
