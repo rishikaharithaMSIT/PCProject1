@@ -53,7 +53,6 @@ search
 @app.route("/search",methods=['POST'])
 def search():
     data = search_feature.getSearchDetails(request.form['search'])
-    print(data)
     if len(data) == 0:
         return render_template("homePage.html", noresults="No matching Results Found")
     return render_template("homePage.html", data=data, isSearch="yes")
@@ -61,20 +60,29 @@ def search():
 """
 search api
 """
-@app.route("/api/search/<search_query>")
-def searchAPI(search_query):    
-    data = search_feature.getSearchDetails(search_query)
-    if len(data) == 0:
-        return jsonify({"result":"no matches found"})
-    dBooks = {"books":[]}
-    for each in data:
-        d = dict()
-        d["isbn"]= each.isbn
-        d["title"] = each.title
-        d["author"] = each.author
-        d["year"] = each.year
-        dBooks["books"].append(d)
-    return jsonify(dBooks)
+@app.route("/api/search/", methods = ['POST'])
+def searchAPI():
+    try:
+        if request.is_json:
+            searchJson = request.get_json()
+            if 'query' in searchJson:
+                query = searchJson['query']
+                data = search_feature.getSearchDetails(query)
+                if len(data) == 0:
+                    return jsonify({"result":"no matches found"})
+                dBooks = {"books":[]}
+                for each in data:
+                    d = dict()
+                    d["isbn"]= each.isbn
+                    d["title"] = each.title
+                    d["author"] = each.author
+                    d["year"] = each.year
+                    dBooks["books"].append(d)
+                return jsonify(dBooks)
+        return (jsonify({"Error":"Invalid JSON"}),400)
+    except:
+        return (jsonify({"Error":"Unexpected Failure"}),500)
+    
 
 
 """
