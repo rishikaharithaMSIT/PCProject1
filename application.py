@@ -3,7 +3,7 @@ Flask App
 """
 import os
 import logging
-from flask import Flask, session, request, render_template, redirect, url_for
+from flask import Flask, session, request, render_template, redirect, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine, exc, desc, or_
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -132,6 +132,25 @@ def book_detail(isbn):
     book = book_details.get_book_details(isbn)
     return render_template("bookDetails.html", book=book)
 
+from flask import Flask, render_template, jsonify, request
+
+  # ... other imports, set up code, and routes ...
+
+@app.route("/api/book/<isbn>")
+def flight_api(isbn):
+    """Return details about a single flight."""
+
+    # Make sure flight exists.
+    book = book_details.get_book_details(isbn)
+    if book is None:
+        return jsonify({"error": "Invalid book_id"}), 422
+
+    # Get all passengers.
+    return jsonify({
+            "title": book.title,
+            "Author": book.author,
+            "Year of Publication": book.year,
+        })
 
 """
 admin page
