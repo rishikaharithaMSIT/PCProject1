@@ -3,7 +3,7 @@ Flask App
 """
 import os
 import logging
-from flask import Flask, session, request, render_template, redirect, url_for
+from flask import Flask, session, request, render_template, redirect, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine, exc, desc, or_
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -12,6 +12,8 @@ from models import Users, db, Books
 from passlib.hash import bcrypt
 import book_details
 import search_feature
+import json
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -51,20 +53,37 @@ search
 @app.route("/search",methods=['POST'])
 def search():
     data = search_feature.getSearchDetails(request.form['search'])
-    print(data)
     if len(data) == 0:
         return render_template("homePage.html", noresults="No matching Results Found")
     return render_template("homePage.html", data=data, isSearch="yes")
 
-# """
-# search api
-# """
-# @app.route("/api/search")
-# def searchAPI():
-#     data = 
-#     if len(data) == 0:
-#         return render_template("homePage.html", noresults="No matching Results Found")
-#     return render_template("homePage.html", data=data, isSearch="yes")
+"""
+search api
+"""
+@app.route("/api/search/", methods = ['POST'])
+def searchAPI():
+    try:
+        if request.is_json:
+            searchJson = request.get_json()
+            if 'query' in searchJson:
+                query = searchJson['query']
+                data = search_feature.getSearchDetails(query)
+                if len(data) == 0:
+                    return jsonify({"result":"no matches found"})
+                dBooks = {"books":[]}
+                for each in data:
+                    d = dict()
+                    d["isbn"]= each.isbn
+                    d["title"] = each.title
+                    d["author"] = each.author
+                    d["year"] = each.year
+                    dBooks["books"].append(d)
+                return jsonify(dBooks)
+        return (jsonify({"Error":"Invalid JSON"}),400)
+    except:
+        return (jsonify({"Error":"Unexpected Failure"}),500)
+    
+
 
 """
 login
