@@ -1,3 +1,3 @@
 import requests
-res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "SlY6kcXclNU5WAwmYVMdKw", "isbns": "9781632168146"})
+res = requests.get("http://127.0.0.1:5000/api/search", params={"key": "SlY6kcXclNU5WAwmYVMdKw", "isbns": "9781632168146"})
 print(res.json())
