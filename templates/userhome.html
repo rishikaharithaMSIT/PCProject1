@@ -14,9 +14,7 @@
         const req = new XMLHttpRequest();
         const url ='api/book/'+elmnt.getAttribute("name");
         req.open('GET',url);
-        // req.setRequestHeader("Content-Type", "text");
         req.onload = () => {
-
               // Extract JSON data from request
               const data = JSON.parse(req.responseText);
               document.getElementById("page").innerHTML = "<div class='card'> <div class='card-body'> <h3 class='card-title'>" + data.title + "</h3>" +
@@ -24,6 +22,7 @@
         }
         req.send();
       }
+
       document.addEventListener('DOMContentLoaded', () => {
 
       document.querySelector('#form').onsubmit = () => {
@@ -32,21 +31,17 @@
           document.getElementById("result").innerHTML = "The search results are loading";
           const request = new XMLHttpRequest();
           const searchParam = document.querySelector('#search').value;
-        //   alert(searchParam);
           request.open('POST', '/api/search/');
           request.setRequestHeader("Content-Type", "application/json");
           // Callback function for when request completes
           request.onload = () => {
-
-              // Extract JSON data from request
-              const data = JSON.parse(request.responseText);
-            //alert(data.books)
-            //   .innerHTML = data.books;
+            // Extract JSON data from request
+            const data = JSON.parse(request.responseText);
             document.querySelector('#result').innerHTML = ""
               data.books.forEach( function(book) {
                 document.querySelector('#result').innerHTML += 
                 "<div class='card'> <div class='card-body'> <h3 class='card-title'>" + book.title + "</h3>" +
-                 "<p class = 'card-text'> ISBN : "+ book.isbn+ " | Author: "+ book.author+ "</p> <button name='"+book.isbn+"' onclick ='func(this)' class='card-link'>View Book</button></h5>";
+                "<p class = 'card-text'> ISBN : "+ book.isbn+ " | Author: "+ book.author+ "</p> <button name='"+book.isbn+"' onclick ='func(this)' class='card-link'>View Book</button></h5></div></div><br>";
             });
             
           }
