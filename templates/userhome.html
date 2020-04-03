@@ -9,11 +9,27 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script>
+      function func(elmnt) {
+        document.getElementById("page").innerHTML = "loading page, please wait";
+        const req = new XMLHttpRequest();
+        const url ='api/book/'+elmnt.getAttribute("name");
+        req.open('GET',url);
+        // req.setRequestHeader("Content-Type", "text");
+        req.onload = () => {
+
+              // Extract JSON data from request
+              const data = JSON.parse(req.responseText);
+              document.getElementById("page").innerHTML = "<div class='card'> <div class='card-body'> <h3 class='card-title'>" + data.title + "</h3>" +
+                 "<h5 class = 'card-text'> Author :"+ data.author+ " </h5><h5 class = 'card-text'>Year : "+data.year+"</h5><h5 class = 'card-text'>  ISBN : "+data.isbn+"</p>";
+        }
+        req.send();
+      }
       document.addEventListener('DOMContentLoaded', () => {
 
       document.querySelector('#form').onsubmit = () => {
 
           // Initialize new request
+          document.getElementById("result").innerHTML = "The search results are loading";
           const request = new XMLHttpRequest();
           const searchParam = document.querySelector('#search').value;
         //   alert(searchParam);
@@ -24,12 +40,13 @@
 
               // Extract JSON data from request
               const data = JSON.parse(request.responseText);
-            //   alert(data.books)
+            //alert(data.books)
             //   .innerHTML = data.books;
-              data.books.forEach( function(book ) {
+            document.querySelector('#result').innerHTML = ""
+              data.books.forEach( function(book) {
                 document.querySelector('#result').innerHTML += 
                 "<div class='card'> <div class='card-body'> <h3 class='card-title'>" + book.title + "</h3>" +
-                 "<h5 class = 'card-text'>"+ book.author+ "&nbsp&nbsp&nbsp <a href='' onclick ='func()' class='card-link'>View Book</a></h5>";
+                 "<p class = 'card-text'> ISBN : "+ book.isbn+ " | Author: "+ book.author+ "</p> <button name='"+book.isbn+"' onclick ='func(this)' class='card-link'>View Book</button></h5>";
             });
             
           }
@@ -57,8 +74,23 @@
 		  </ul>
     </nav>
     <br>
-    <div id="result">
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-6" id="result">
+          
+        </div>
+        <div class="col-sm-6" id="page">
+          
+        </div>
+        
+      </div>
+    </div>
+    <!-- <div id="result">
 
     </div>
+    <div id="page">
+
+    </div> -->
 </body>
 </html>

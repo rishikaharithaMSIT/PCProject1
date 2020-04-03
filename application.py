@@ -165,7 +165,7 @@ from flask import Flask, render_template, jsonify, request
 
   # ... other imports, set up code, and routes ...
 
-@app.route("/api/book/<isbn>")
+@app.route("/api/book/<isbn>",methods=['GET'])
 def flight_api(isbn):
     """Return details about a single flight."""
 
@@ -176,9 +176,10 @@ def flight_api(isbn):
 
     # Get all passengers.
     return jsonify({
+            "isbn" : book.isbn,
             "title": book.title,
-            "Author": book.author,
-            "Year of Publication": book.year,
+            "author": book.author,
+            "year": book.year,
         })
 
 """
